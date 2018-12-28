@@ -35,6 +35,10 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.StackingBehavior;
+import com.payano.homeassistant.connector.ConnectorEnum;
+import com.payano.homeassistant.connector.WebSocketConfig;
+import com.payano.homeassistant.connector.WebSocketConnector;
+import com.payano.homeassistant.manager.HAConnectionManager;
 import com.payano.homeassistant.model.Entity;
 import com.payano.homeassistant.model.ErrorMessage;
 import com.payano.homeassistant.model.Group;
@@ -262,6 +266,27 @@ public class ConnectActivity extends BaseActivity {
         protected ErrorMessage doInBackground(Void... params) {
             try {
                 publishProgress(getString(R.string.progress_connecting));
+                HAConnectionManager hacm = HAConnectionManager.getInstance();
+                WebSocketConfig webConfig = new WebSocketConfig();
+                webConfig.uri = mUri;
+                webConfig.api_password = mPassword;
+
+                WebSocketConnector wsc = new WebSocketConnector(webConfig);
+                ConnectorEnum connectTest = hacm.testConnector(wsc);
+                Log.d("YouQi", "connected test: " + connectTest);
+
+                switch (connectTest){
+                    case Not_connected:
+                        return new ErrorMessage("Error 404", getString(R.string.error_invalid_ha_server));
+                    case Invalid_password:
+                    return new ErrorMessage("Error 401", getString(R.string.error_invalid_password));
+                    case Invalid_server:
+                    case Unknown_error:
+                        return new ErrorMessage("ERROR", "UNKNOWN ERROR");
+                    default:
+                        // All good
+                }
+
 
                 //Response<BootstrapResponse> response = ServiceProvider.getApiService(mUri).bootstrap(mBearerHeader).execute();
                 Response<String> response = ServiceProvider.getRawApiService(mUri).rawStates(mBearerHeader).execute();

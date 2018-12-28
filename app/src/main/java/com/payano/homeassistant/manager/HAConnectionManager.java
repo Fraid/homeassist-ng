@@ -1,6 +1,7 @@
 package com.payano.homeassistant.manager;
 
 import com.payano.homeassistant.connector.BaseConnector;
+import com.payano.homeassistant.connector.ConnectorEnum;
 import com.payano.homeassistant.connector.WebSocketConfig;
 import com.payano.homeassistant.connector.WebSocketConnector;
 import com.payano.homeassistant.messages.EventMessage;
@@ -23,7 +24,7 @@ import java.util.*;
  * Fetching media player thumbnails
  */
 public class HAConnectionManager extends HAPublisher implements Runnable, Observer {
-    private static final int CONNECT_DELAY_MS = 200;
+    private static final int CONNECT_DELAY_MS = 500;
     private static final int CONNECT_RETRY_COUNT = 4;
 
     private static HAConnectionManager mInstance;
@@ -196,10 +197,10 @@ public class HAConnectionManager extends HAPublisher implements Runnable, Observ
         }
     }
 
-    public boolean testConnector(BaseConnector bc){
+    public ConnectorEnum testConnector(BaseConnector bc){
         bc.setup();
         bc.waitForConnect(CONNECT_DELAY_MS,CONNECT_RETRY_COUNT);
-        boolean connectStatus = bc.isConnected();
+        ConnectorEnum connectStatus = bc.getStatus();
         bc.teardown();
         return connectStatus;
 

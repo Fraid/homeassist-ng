@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
+import com.payano.homeassistant.manager.HAConnectionManager;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -26,6 +27,9 @@ public class AppController extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         mInstance = this;
+
+        // Start connection manager
+        HAConnectionManager.getInstance().startInstance();
 
         //String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         //Crashlytics.log(Log.DEBUG, "YouQi", "");

@@ -13,6 +13,7 @@ public class WebSocketConnector extends BaseConnector {
     private boolean mConnected;
     private WebSocketConfig mConfig;
     private static final String uriAppend = "/api/websocket";
+    private ConnectorEnum mConnectStatus = ConnectorEnum.Not_connected;
 
     private final class EchoWebSocketListener extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
@@ -40,6 +41,7 @@ public class WebSocketConnector extends BaseConnector {
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             output("Error : " + t.getMessage());
+            mConnectStatus = ConnectorEnum.Invalid_server;
             teardown();
         }
     }
@@ -71,6 +73,11 @@ public class WebSocketConnector extends BaseConnector {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public ConnectorEnum getStatus(){
+        return mConnectStatus;
     }
 
     @Override
@@ -119,6 +126,7 @@ public class WebSocketConnector extends BaseConnector {
             } else if (incoming.get("type").equals("auth_invalid")) {
                 // Failed with password close connection.
                 // Signal to observers that we are down.
+                mConnectStatus = ConnectorEnum.Invalid_password;
                 teardown();
                 return;
             } else if (incoming.get("type").equals("auth_ok")) {
@@ -135,6 +143,7 @@ public class WebSocketConnector extends BaseConnector {
                             incoming.get("id").equals(18) &&
                             incoming.get("type").equals("result")
                     ) {
+                mConnectStatus = ConnectorEnum.Success;
                 mConnected = true;
                 return;
             }
