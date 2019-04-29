@@ -70,6 +70,7 @@ import com.payano.homeassistant.model.rest.RxPayload;
 import com.payano.homeassistant.provider.DatabaseManager;
 import com.payano.homeassistant.provider.DummyContentProvider;
 import com.payano.homeassistant.provider.EntityContentProvider;
+import com.payano.homeassistant.provider.FirebaseDBManager;
 import com.payano.homeassistant.provider.ServiceProvider;
 import com.payano.homeassistant.service.DataSyncService;
 import com.payano.homeassistant.util.BottomNavigationViewHelper;
@@ -77,9 +78,9 @@ import com.payano.homeassistant.shared.EntityProcessInterface;
 import com.payano.homeassistant.shared.EventEmitterInterface;
 import com.payano.homeassistant.util.CommonUtil;
 import com.payano.homeassistant.util.FaultUtil;
+import com.payano.homeassistant.util.OnlineUtil;
 import com.payano.homeassistant.view.ChangelogView;
 import com.payano.homeassistant.view.MultiSwipeRefreshLayout;
-import com.crashlytics.android.Crashlytics;
 import com.jaeger.library.StatusBarUtil;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -874,6 +875,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     @Override
     public void callService(final String domain, final String service, CallServiceRequest serviceRequest) {
+        if (OnlineUtil.IS_ONLINE_MODE) {
+            FirebaseDBManager.callService(service, serviceRequest);
+            return;
+        }
         if (mService != null && mService.isWebSocketRunning()) {
             Log.d("YouQi", "Using WebSocket");
             mService.callService(domain, service, serviceRequest);

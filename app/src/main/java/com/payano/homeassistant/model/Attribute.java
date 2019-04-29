@@ -7,6 +7,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
+import com.google.firebase.database.Exclude;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -52,7 +53,9 @@ public class Attribute {
     @SerializedName("is_volume_muted")
     public Boolean isVolumeMuted;
 
+    //Firebase don't support BigDecimal
     @SerializedName("volume_level")
+    @Exclude
     public BigDecimal volumeLevel;
 
     @SerializedName("entity_picture")
@@ -91,14 +94,16 @@ public class Attribute {
 
     @SerializedName("device_class")
     public String deviceClass;
-
+    @Exclude
     @SerializedName("brightness")
     public BigDecimal brightness;
 
+    @Exclude
     @SerializedName("color_temp")
     public BigDecimal colorTemp;
 
     @SerializedName("rgb_color")
+    @Exclude
     public ArrayList<BigDecimal> rgbColors;
 
     @SerializedName("options")
@@ -129,21 +134,27 @@ public class Attribute {
     public String pattern;
 
     @SerializedName("max")
+    @Exclude
     public BigDecimal max;
 
     @SerializedName("min")
+    @Exclude
     public BigDecimal min;
 
     @SerializedName("step")
+    @Exclude
     public BigDecimal step;
 
     @SerializedName("current_temperature")
+    @Exclude
     public BigDecimal currentTemperature;
 
     @SerializedName("max_temp")
+    @Exclude
     public BigDecimal maxTemp;
 
     @SerializedName("min_temp")
+    @Exclude
     public BigDecimal minTemp;
 
     @SerializedName("temperature")
@@ -167,18 +178,23 @@ public class Attribute {
     public String battery;
 
     @SerializedName("gps_accuracy")
+    @Exclude
     public BigDecimal gpsAccuracy;
 
     @SerializedName("altitude")
+    @Exclude
     public BigDecimal altitude;
 
     @SerializedName("latitude")
+    @Exclude
     public BigDecimal latitude;
 
     @SerializedName("longitude")
+    @Exclude
     public BigDecimal longitude;
 
     @SerializedName("radius")
+    @Exclude
     public BigDecimal radius;
 
     //https://home-assistant.io/blog/2017/08/12/release-51/#release-0512---august-14
@@ -188,20 +204,24 @@ public class Attribute {
     @SerializedName("unit_of_measurement")
     public String unitOfMeasurement;
 
+    @Exclude
     public int getNumberOfDecimalPlaces() {
         String string = step.stripTrailingZeros().toPlainString();
         int index = string.indexOf(".");
         return index < 0 ? 0 : string.length() - index - 1;
     }
 
+    @Exclude
     public Uri getEntityPictureUri() {
         return Uri.parse(entityPicture.startsWith("//") ? ("http:" + entityPicture) : entityPicture);
     }
 
+    @Exclude
     public Long getTimestampForInputDateTime() {
         return timestamp == null ? null : (new BigDecimal(timestamp).longValue());
     }
 
+    @Exclude
     public BigDecimal getTemperature() {
         Crashlytics.log("temperature: " + temperature);
         if (temperature == null) {
@@ -210,6 +230,7 @@ public class Attribute {
         return new BigDecimal(temperature);
     }
 
+    @Exclude
     public boolean isView() {
         return view != null && view;
     }

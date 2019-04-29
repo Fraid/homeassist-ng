@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.google.firebase.database.Exclude;
 import com.payano.homeassistant.util.CommonUtil;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.LatLng;
@@ -40,6 +41,7 @@ public class Entity {
         return (displayOrder == null) ? 1000 : displayOrder;
     }
 
+    @Exclude
     public static Entity getInstance(Cursor cursor) {
         Entity entity = null;
         try {
@@ -497,6 +499,7 @@ public class Entity {
         return "turn_" + (isCurrentStateActive() ? "off" : "on");
     }
 
+    @Exclude
     public ContentValues getContentValues() {
         return getContentValues(true);
     }
@@ -532,5 +535,9 @@ public class Entity {
                 result = new LatLng(attributes.latitude.floatValue(), attributes.longitude.floatValue());
             }
         return result;
+    }
+
+    public FirebaseEntity toFBEntity() {
+        return new FirebaseEntity(this);
     }
 }

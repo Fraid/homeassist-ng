@@ -132,4 +132,8 @@ public class CallServiceRequest {
     public String toString() {
         return (new Gson()).toJson(this);
     }
+
+    public FirebaseCallServiceRequest toFbCallServiceRequest(String service) {
+        return new FirebaseCallServiceRequest(service,this);
+    }
 }
