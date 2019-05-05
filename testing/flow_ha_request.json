@@ -1,0 +1,65 @@
+[
+    {
+        "id": "95838faf.f5793",
+        "type": "firebase.on",
+        "z": "ae404047.2361e",
+        "name": "onFBEvent()",
+        "firebaseconfig": "",
+        "childpath": "homeassisant/request",
+        "atStart": false,
+        "eventType": "value",
+        "queries": [],
+        "x": 389,
+        "y": 159,
+        "wires": [
+            [
+                "f0b99e45.48b1c",
+                "b3cb8b89.3404e8"
+            ]
+        ]
+    },
+    {
+        "id": "b3cb8b89.3404e8",
+        "type": "api-call-service",
+        "z": "ae404047.2361e",
+        "name": "",
+        "server": "2f099095.52886",
+        "service_domain": "",
+        "service": "",
+        "data": "",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 641.5,
+        "y": 159,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f0b99e45.48b1c",
+        "type": "debug",
+        "z": "ae404047.2361e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 577.5,
+        "y": 253,
+        "wires": []
+    },
+    {
+        "id": "2f099095.52886",
+        "type": "server",
+        "z": "",
+        "name": "Home Assistant",
+        "legacy": false,
+        "hassio": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true
+    }
+]
