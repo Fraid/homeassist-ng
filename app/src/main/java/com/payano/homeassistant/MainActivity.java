@@ -57,6 +57,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.database.ChildEventListener;
 import com.payano.homeassistant.fragment.ConnectionFragment;
 import com.payano.homeassistant.fragment.EntityFragment;
 import com.payano.homeassistant.model.Changelog;
@@ -78,7 +79,6 @@ import com.payano.homeassistant.shared.EntityProcessInterface;
 import com.payano.homeassistant.shared.EventEmitterInterface;
 import com.payano.homeassistant.util.CommonUtil;
 import com.payano.homeassistant.util.FaultUtil;
-import com.payano.homeassistant.util.OnlineUtil;
 import com.payano.homeassistant.view.ChangelogView;
 import com.payano.homeassistant.view.MultiSwipeRefreshLayout;
 import com.jaeger.library.StatusBarUtil;
@@ -101,7 +101,7 @@ import retrofit2.Response;
 
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
         EntityProcessInterface,
-        EventEmitterInterface{
+        EventEmitterInterface {
     private Subject<RxPayload> mEventEmitter = PublishSubject.create();
     private Call<String> mCall2;
     private Spinner mServerSpinner;
@@ -109,6 +109,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     private ArrayList<HomeAssistantServer> mServers;
     private ServerAdapter mServerAdapter;
     private AppBarLayout mAppBarLayout;
+    private ChildEventListener stateEventListener;
 
     @Override
     public Subject<RxPayload> getEventSubject() {
@@ -158,7 +159,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
             }
 
 
-            
             Log.d("YouQi", "Service Bound");
             binder.getEventSubject()
                     .subscribeOn(Schedulers.io())
@@ -194,6 +194,24 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         }
     };
 
+    private IViewUpdate viewUpdate = new IViewUpdate() {
+
+        @Override
+        public void onInitDataReady(ArrayList<ContentValues> values) {
+            if (!values.isEmpty())
+                getContentResolver()
+                        .bulkInsert(EntityContentProvider.getUrl(), values.toArray(new ContentValues[values.size()]));
+            // Now we start to listen to any child change
+            stateEventListener = FirebaseDBManager.startListenToChild(MainActivity.this);
+            setFetchingStatus(false);
+        }
+    };
+
+    private void setFetchingStatus(boolean status) {
+        if (mRefreshTask == null) {
+            mSwipeRefresh.setRefreshing(status);
+        }
+    }
 
     private void showNetworkBusy() {
         mProgressBar.setVisibility(View.VISIBLE);
@@ -262,6 +280,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         mProgressBar.setVisibility(View.GONE);
 
     }
+
     //https://stackoverflow.com/questions/21380914/contentobserver-onchange
     private void setupContentObserver() {
         // creates and starts a new thread set up as a looper
@@ -583,7 +602,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     @Override
     protected void onStart() {
         super.onStart();
-
+        if (mSharedPref.getBoolean("firebase_mode", false)) {
+            FirebaseDBManager.onAppStart(viewUpdate);
+            return;
+        }
         Intent intent = new Intent(this, DataSyncService.class);
         getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
@@ -851,6 +873,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     }
 
     public void refreshApi() {
+        if (mSharedPref.getBoolean("firebase_mode", false)) {
+            FirebaseDBManager.removeEventListener(stateEventListener);
+            stateEventListener = null;
+            FirebaseDBManager.refresh(viewUpdate);
+            return;
+        }
         if (mRefreshTask == null) {
             mRefreshTask = new RefreshTask();
             mRefreshTask.execute((Void) null);
@@ -861,12 +889,20 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     protected void onPause() {
         super.onPause();
         getContentResolver().unregisterContentObserver(mEntityChangeObserver);
+
+        FirebaseDBManager.removeEventListener(stateEventListener);
+        FirebaseDBManager.stopOnlineSync();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        //For update view on data change
         getContentResolver().registerContentObserver(DummyContentProvider.getUrl(), true, mEntityChangeObserver);
+        if (mSharedPref.getBoolean("firebase_mode", false)) {
+            return;
+        }
+
         if (!runonce || (mService != null && !mService.isWebSocketRunning())) {
             runonce = true;
             refreshApi();
@@ -875,7 +911,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     @Override
     public void callService(final String domain, final String service, CallServiceRequest serviceRequest) {
-        if (OnlineUtil.IS_ONLINE_MODE) {
+        if (mSharedPref.getBoolean("firebase_mode", false)) {
             FirebaseDBManager.callService(service, serviceRequest);
             return;
         }
@@ -998,7 +1034,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 }
 
                 final ArrayList<Entity> statesResponse = response.body();
-
                 if (statesResponse == null) {
                     throw new RuntimeException("No Data");
                 }

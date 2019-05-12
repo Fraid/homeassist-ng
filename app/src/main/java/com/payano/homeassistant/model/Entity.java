@@ -41,7 +41,6 @@ public class Entity {
         return (displayOrder == null) ? 1000 : displayOrder;
     }
 
-    @Exclude
     public static Entity getInstance(Cursor cursor) {
         Entity entity = null;
         try {
@@ -499,7 +498,6 @@ public class Entity {
         return "turn_" + (isCurrentStateActive() ? "off" : "on");
     }
 
-    @Exclude
     public ContentValues getContentValues() {
         return getContentValues(true);
     }
@@ -537,7 +535,4 @@ public class Entity {
         return result;
     }
 
-    public FirebaseEntity toFBEntity() {
-        return new FirebaseEntity(this);
-    }
 }

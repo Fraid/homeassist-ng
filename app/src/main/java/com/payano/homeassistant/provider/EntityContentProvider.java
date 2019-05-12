@@ -8,7 +8,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -98,15 +97,9 @@ public class EntityContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
-        String table = "";
-//        switch (sUriMatcher.match(uri)) {
-//            case TABLE_ITEMS: {
-//                table = TABLE_NAME; //TableItems.NAME;
-//                break;
-//            }
-//        }
 
-        long result = mSqliteOpenHelper.getWritableDatabase().insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        // Why insertWithOnConflict while constraint are already on table (UNIQUE (ENTITY_ID) ON CONFLICT REPLACE) ?
+        long result = mSqliteOpenHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
 
         if (result == -1) {
             throw new SQLException("insert with conflict!");
@@ -126,7 +119,6 @@ public class EntityContentProvider extends ContentProvider {
 
         try {
             db.delete(TABLE_NAME, null, null);
-
             for (ContentValues value : values) {
                 db.insert(TABLE_NAME, null, value);
                 ++inserted;

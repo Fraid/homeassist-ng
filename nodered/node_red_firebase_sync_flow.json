@@ -1,0 +1,590 @@
+[
+    {
+        "id": "e6eaf35e.3f448",
+        "type": "tab",
+        "label": "HA-NG",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b8f86584.f8fe08",
+        "type": "firebase.on",
+        "z": "e6eaf35e.3f448",
+        "name": "onUserRequest()",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/android/event/request",
+        "atStart": false,
+        "eventType": "value",
+        "queries": [],
+        "x": 103,
+        "y": 472,
+        "wires": [
+            [
+                "8c3d65a3.939698"
+            ]
+        ]
+    },
+    {
+        "id": "48ba6b6.2db2e94",
+        "type": "api-call-service",
+        "z": "e6eaf35e.3f448",
+        "name": "forwardToHA",
+        "server": "2f099095.52886",
+        "service_domain": "",
+        "service": "",
+        "data": "{\"entity_id\":\"Fraid\"}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 676.5,
+        "y": 471,
+        "wires": [
+            [
+                "d488e716.342318"
+            ]
+        ]
+    },
+    {
+        "id": "ac845446.dcc688",
+        "type": "ha-get-entities",
+        "z": "e6eaf35e.3f448",
+        "server": "2f099095.52886",
+        "name": "getAllStates",
+        "rules": [
+            {
+                "property": "state",
+                "logic": "is",
+                "value": "",
+                "valueType": "re"
+            }
+        ],
+        "output_type": "array",
+        "output_empty_results": false,
+        "output_location_type": "msg",
+        "output_location": "payload",
+        "output_results_count": 1,
+        "x": 217.5,
+        "y": 731,
+        "wires": [
+            [
+                "c3206b21.6fb4b8"
+            ]
+        ]
+    },
+    {
+        "id": "5d6854fb.2a23ac",
+        "type": "firebase.on",
+        "z": "e6eaf35e.3f448",
+        "name": "onAppStart()",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/android/event/user/onAppStart",
+        "atStart": true,
+        "eventType": "value",
+        "queries": [],
+        "x": 101,
+        "y": 606,
+        "wires": [
+            [
+                "7400d6d6.f66b28"
+            ]
+        ]
+    },
+    {
+        "id": "72364885.e8f648",
+        "type": "firebase modify",
+        "z": "e6eaf35e.3f448",
+        "name": "setAppStart=false",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/android/event/user/onAppStart",
+        "method": "remove",
+        "value": "false",
+        "priority": "msg.priority",
+        "x": 640,
+        "y": 606,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7400d6d6.f66b28",
+        "type": "switch",
+        "z": "e6eaf35e.3f448",
+        "name": "isRefresh ?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "eq",
+                "v": "true",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 287.5,
+        "y": 607,
+        "wires": [
+            [
+                "ac845446.dcc688",
+                "72364885.e8f648"
+            ],
+            [
+                "ac845446.dcc688",
+                "72364885.e8f648"
+            ]
+        ]
+    },
+    {
+        "id": "77b93f2d.83c62",
+        "type": "server-events",
+        "z": "e6eaf35e.3f448",
+        "name": "",
+        "server": "2f099095.52886",
+        "event_type": "state_changed",
+        "x": 115.5,
+        "y": 302,
+        "wires": [
+            [
+                "2b61908.8ddba7"
+            ]
+        ]
+    },
+    {
+        "id": "70bfc2e7.b45e4c",
+        "type": "firebase modify",
+        "z": "e6eaf35e.3f448",
+        "name": "sync new state",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/states",
+        "method": "update",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 982,
+        "y": 308,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e41eea72.eacd98",
+        "type": "firebase.on",
+        "z": "e6eaf35e.3f448",
+        "name": "onAndroidUserEvent()",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/android/event/user/isOnline",
+        "atStart": true,
+        "eventType": "value",
+        "queries": [],
+        "x": 113,
+        "y": 99,
+        "wires": [
+            [
+                "cc45e503.cb7fa8"
+            ]
+        ]
+    },
+    {
+        "id": "cc45e503.cb7fa8",
+        "type": "function",
+        "z": "e6eaf35e.3f448",
+        "name": "init userIsOnline",
+        "func": "\n\nflow.set('userIsOnline',msg.payload===true||msg.payload==\"true\");\n msg.payload={userIsOnline: msg.payload===true||msg.payload==\"true\"};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 317,
+        "y": 98,
+        "wires": [
+            [
+                "92ed0750.08c0a8"
+            ]
+        ]
+    },
+    {
+        "id": "4dfb79eb.84b078",
+        "type": "switch",
+        "z": "e6eaf35e.3f448",
+        "name": "isDataValid?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 551,
+        "y": 307,
+        "wires": [
+            [
+                "ad1275f6.b60f68"
+            ]
+        ]
+    },
+    {
+        "id": "2b61908.8ddba7",
+        "type": "function",
+        "z": "e6eaf35e.3f448",
+        "name": "isUserOnline ?",
+        "func": "\n if( flow.get('userIsOnline')!==true)\n msg.payload=flow.get('userIsOnline');\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 345,
+        "y": 303,
+        "wires": [
+            [
+                "4dfb79eb.84b078"
+            ]
+        ]
+    },
+    {
+        "id": "55da266e.300108",
+        "type": "comment",
+        "z": "e6eaf35e.3f448",
+        "name": "refresh on state change",
+        "info": "refresh on state change, if user is online",
+        "x": 117,
+        "y": 254,
+        "wires": []
+    },
+    {
+        "id": "5a1ca45a.e6d17c",
+        "type": "delay",
+        "z": "e6eaf35e.3f448",
+        "name": "Auto turn off after 10 min",
+        "pauseType": "delayv",
+        "timeout": "10",
+        "timeoutUnits": "minutes",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 839.5,
+        "y": 84,
+        "wires": [
+            [
+                "6b21dfaf.b3a94"
+            ]
+        ]
+    },
+    {
+        "id": "6b21dfaf.b3a94",
+        "type": "firebase modify",
+        "z": "e6eaf35e.3f448",
+        "name": "setUserIsOnline=false",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/android/event/user/isOnline",
+        "method": "set",
+        "value": "false",
+        "priority": "msg.priority",
+        "x": 1070,
+        "y": 92,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "92ed0750.08c0a8",
+        "type": "switch",
+        "z": "e6eaf35e.3f448",
+        "name": "userIsOnline ?",
+        "property": "payload.userIsOnline",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            },
+            {
+                "t": "eq",
+                "v": "true",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "false",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 530,
+        "y": 111,
+        "wires": [
+            [
+                "5a1ca45a.e6d17c"
+            ],
+            [
+                "ad886533.7c8828"
+            ],
+            [
+                "5a1ca45a.e6d17c"
+            ],
+            [
+                "ad886533.7c8828"
+            ]
+        ]
+    },
+    {
+        "id": "74148720.769398",
+        "type": "firebase modify",
+        "z": "e6eaf35e.3f448",
+        "name": "sync all states",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/states",
+        "method": "update",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 615,
+        "y": 730,
+        "wires": [
+            [
+                "924f41a6.b3285"
+            ]
+        ]
+    },
+    {
+        "id": "c3206b21.6fb4b8",
+        "type": "function",
+        "z": "e6eaf35e.3f448",
+        "name": "toFirebaseRawData",
+        "func": "\nvar json_arr = {};\n\nfor (i = 0; i < msg.payload.length; i=i+1) {\n    var json_var={}\n    if(msg.payload[i].hasOwnProperty(\"attributes\") && msg.payload[i].attributes.hasOwnProperty(\"friendly_name\"))\n    json_var[\"friendly_name\"]=msg.payload[i].attributes.friendly_name;\n    json_var[\"raw_data\"]=JSON.stringify(msg.payload[i]);\n    json_var[\"domain\"]=msg.payload[i].entity_id.split(\".\")[0];\n    json_var[\"entity_id\"]=msg.payload[i].entity_id;\n    json_arr[msg.payload[i].entity_id.replace(\".\", \"__\")] =json_var;\n    \n \n   \n}\n\n  \n msg.payload=json_arr;\n   \n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 401,
+        "y": 731,
+        "wires": [
+            [
+                "74148720.769398"
+            ]
+        ]
+    },
+    {
+        "id": "de15933a.2d1d5",
+        "type": "inject",
+        "z": "e6eaf35e.3f448",
+        "name": "Debug force refresh",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 132.5,
+        "y": 844,
+        "wires": [
+            [
+                "ac845446.dcc688"
+            ]
+        ]
+    },
+    {
+        "id": "ad1275f6.b60f68",
+        "type": "function",
+        "z": "e6eaf35e.3f448",
+        "name": "toFirebaseRawEntity",
+        "func": "\nvar json_arr = {};\nvar json_var={}\n \n\n    \n    if(msg.payload.event.new_state.hasOwnProperty(\"attributes\") && msg.payload.event.new_state.attributes.hasOwnProperty(\"friendly_name\"))\n    json_var[\"friendly_name\"]=msg.payload.event.new_state.attributes.friendly_name;\n    json_var[\"raw_data\"]=JSON.stringify(msg.payload.event.new_state);\n    json_var[\"domain\"]=msg.payload.entity_id.split(\".\")[0];\n    \n    json_var[\"entity_id\"]=msg.payload.entity_id;\n   json_arr[msg.payload.entity_id.replace(\".\", \"__\")] =json_var;\n\n\n  \n msg.payload=json_arr;\n   \n   \n   \n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 772,
+        "y": 306,
+        "wires": [
+            [
+                "70bfc2e7.b45e4c"
+            ]
+        ]
+    },
+    {
+        "id": "ad886533.7c8828",
+        "type": "switch",
+        "z": "e6eaf35e.3f448",
+        "name": "isAppStart ?",
+        "property": "payload.userAppStart",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "eq",
+                "v": "true",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 723,
+        "y": 142,
+        "wires": [
+            [
+                "5a1ca45a.e6d17c"
+            ],
+            [
+                "5a1ca45a.e6d17c"
+            ]
+        ]
+    },
+    {
+        "id": "e933b7f3.85eec8",
+        "type": "comment",
+        "z": "e6eaf35e.3f448",
+        "name": "State change request",
+        "info": "",
+        "x": 121,
+        "y": 428,
+        "wires": []
+    },
+    {
+        "id": "343fd56e.58bcba",
+        "type": "switch",
+        "z": "e6eaf35e.3f448",
+        "name": "isDataValid?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 500,
+        "y": 476,
+        "wires": [
+            [
+                "48ba6b6.2db2e94"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "d488e716.342318",
+        "type": "firebase modify",
+        "z": "e6eaf35e.3f448",
+        "name": "reset request",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/android/event/request",
+        "method": "remove",
+        "value": "false",
+        "priority": "msg.priority",
+        "x": 849,
+        "y": 469,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f97ba082.4f594",
+        "type": "function",
+        "z": "e6eaf35e.3f448",
+        "name": "init userAppStart ",
+        "func": " \n\nflow.set('userAppStart',msg.payload===true||msg.payload==\"true\");\n msg.payload={userAppStart:msg.payload===true||msg.payload==\"true\"};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 319,
+        "y": 174,
+        "wires": [
+            [
+                "92ed0750.08c0a8"
+            ]
+        ]
+    },
+    {
+        "id": "73b091aa.3561b",
+        "type": "firebase.on",
+        "z": "e6eaf35e.3f448",
+        "name": "onAndroidUserEvent()",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/android/event/user/onAppStart",
+        "atStart": true,
+        "eventType": "value",
+        "queries": [],
+        "x": 113,
+        "y": 171,
+        "wires": [
+            [
+                "f97ba082.4f594"
+            ]
+        ]
+    },
+    {
+        "id": "924f41a6.b3285",
+        "type": "firebase modify",
+        "z": "e6eaf35e.3f448",
+        "name": "reset appStart",
+        "firebaseconfig": "",
+        "childpath": "homeassistant/android/event/user/isOnline",
+        "method": "remove",
+        "value": "false",
+        "priority": "msg.priority",
+        "x": 809,
+        "y": 731,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8c3d65a3.939698",
+        "type": "function",
+        "z": "e6eaf35e.3f448",
+        "name": "set userIsOnline ",
+        "func": " \n\nflow.set('userIsOnline', true);\n return msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 315,
+        "y": 476,
+        "wires": [
+            [
+                "343fd56e.58bcba"
+            ]
+        ]
+    },
+    {
+        "id": "7f2b215c.3b208",
+        "type": "comment",
+        "z": "e6eaf35e.3f448",
+        "name": "On app start sync everything",
+        "info": "",
+        "x": 151,
+        "y": 562,
+        "wires": []
+    },
+    {
+        "id": "26bf04fe.a98d3c",
+        "type": "comment",
+        "z": "e6eaf35e.3f448",
+        "name": "Init globale variable",
+        "info": "",
+        "x": 102,
+        "y": 50,
+        "wires": []
+    },
+    {
+        "id": "2f099095.52886",
+        "type": "server",
+        "z": "",
+        "name": "Home Assistant",
+        "legacy": false,
+        "hassio": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true
+    }
+]

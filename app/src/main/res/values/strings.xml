@@ -132,6 +132,7 @@
     <string name="pref_sound_effect_desc">Turn on/off clicking sounds</string>
     <string name="pref_push_notification">Push Notification</string>
     <string name="pref_push_notification_desc">Allow HomeAssist to push alerts to this device.</string>
+
     <string name="pref_websocket_mode">WebSocket Mode</string>
     <string name="pref_websocket_mode_desc">Start WebSocket on app launch. Enabling this will allow data polling with HA server. Requires restart.</string>
     <string name="pref_test_push_notification">Test Push Notification</string>
@@ -188,5 +189,11 @@
 
     <string name="auth_finger">Fingerprint Authentication</string>
     <string name="auth_finger_instructions">Place your fingertip on the fingerprint scanner to verify your identity</string>
+
+    <string name="pref_firebase_mode">Firebase Mode</string>
+    <string name="pref_firebase_mode_desc">Refresh Firebase on app launch</string>
+    <string name="pref_category_firebase">Firebase </string>
+    <string name="pref_auto_sync_light_switch_desc">After the states has been synced, only light and switch will be automatically updated.</string>
+    <string name="pref_auto_sync_light_switch_title">Update change of light and switch only.</string>
 
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         android:layout="@layout/preferences_category"
@@ -12,25 +11,25 @@
             android:entryValues="@array/column_values"
             android:key="num_columns"
             android:summary="@string/pref_column_entries_desc"
-            android:title="@string/pref_column_entries"/>
+            android:title="@string/pref_column_entries" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="sound_effect"
             android:summary="@string/pref_sound_effect_desc"
-            android:title="@string/pref_sound_effect"/>
+            android:title="@string/pref_sound_effect" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="websocket_mode"
             android:summary="@string/pref_websocket_mode_desc"
-            android:title="@string/pref_websocket_mode"/>
+            android:title="@string/pref_websocket_mode" />
 
         <CheckBoxPreference
+            android:id="@+id/fingerprint_id"
             android:defaultValue="false"
             android:key="fingerprint_authentication"
-            android:title="@string/auth_finger"
-            android:id="@+id/fingerprint_id"/>
+            android:title="@string/auth_finger" />
         <!--<CheckBoxPreference-->
         <!--android:defaultValue="true"-->
         <!--android:key="push_notification"-->
@@ -44,37 +43,50 @@
         <!--android:title="@string/pref_test_push_notification"/>-->
 
     </PreferenceCategory>
-
+    <PreferenceCategory
+        android:layout="@layout/preferences_category"
+        android:title="@string/pref_category_firebase">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="firebase_mode"
+            android:summary="@string/pref_firebase_mode_desc"
+            android:title="@string/pref_firebase_mode" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="auto_sync_light_switch"
+            android:summary="@string/pref_auto_sync_light_switch_desc"
+            android:title="@string/pref_auto_sync_light_switch_title" />
+    </PreferenceCategory>
     <PreferenceCategory
         android:layout="@layout/preferences_category"
         android:title="@string/pref_category_application">
         <Preference
             android:key="version"
             android:summary="0.0.0"
-            android:title="@string/pref_app_version"/>
+            android:title="@string/pref_app_version" />
 
         <Preference
             android:key="build"
             android:summary="Development"
-            android:title="@string/pref_build"/>
+            android:title="@string/pref_build" />
 
         <Preference
             android:key="open_source"
-            android:title="@string/pref_oss_license"/>
+            android:title="@string/pref_oss_license" />
 
         <Preference
             android:key="changelog"
-            android:title="@string/pref_changelog"/>
+            android:title="@string/pref_changelog" />
 
         <!--<Preference-->
         <!--android:key="bug_report"-->
         <!--android:title="@string/pref_bug_report"/>-->
         <Preference
             android:key="recommend"
-            android:title="@string/menu_recommend"/>
+            android:title="@string/menu_recommend" />
 
         <Preference
             android:key="about"
-            android:title="@string/pref_about"/>
+            android:title="@string/pref_about" />
     </PreferenceCategory>
 </PreferenceScreen>
